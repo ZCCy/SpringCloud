@@ -33,7 +33,7 @@ public class WeatherDataServiceImp implements WeatherDataService {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
-    private static final long TIME_OUT = 10l;
+    private static final long TIME_OUT = 2000l;
 
     @Override
     public WeatherResponse getDataByCityId(String cityId) {
@@ -47,6 +47,53 @@ public class WeatherDataServiceImp implements WeatherDataService {
         return this.doGetWeather(url);
     }
 
+    @Override
+    public void syncDateByCityId(String cityId) {
+        String url =WEATHER_URL + "citykey=" + cityId;
+        this.saveWeatherData(url);
+    }
+
+
+
+    /**
+     * 把天气数据放在Redis中
+     * @param url
+     */
+    private void saveWeatherData(String url){
+        String strBody = null;
+        String key = url;
+        ValueOperations<String,String> ops = stringRedisTemplate.opsForValue();
+
+            URL realUrl = null;
+            try {
+                realUrl = new URL(url);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            // 打开和URL之间的连接
+            HttpURLConnection conn = null;
+            // 发送POST请求必须设置如下两行
+            try {
+                conn = (HttpURLConnection) realUrl.openConnection();
+                conn.setRequestMethod("GET");// 提交模式
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            conn.setDoInput(true);
+            conn.setDoOutput(false);
+            conn.setUseCaches(false);
+            conn.setRequestProperty("Connection", "close");
+            conn.setConnectTimeout(3000);  //设置连接主机超时（单位：毫秒）
+            conn.setReadTimeout(2000);     //设置从主机读取数据超时（单位：毫秒）
+            try {
+                InputStream stream = new GZIPInputStream(conn.getInputStream());
+                strBody = IOUtils.toString(stream, "utf-8");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            //数据写入缓存
+            ops.set(key,strBody,TIME_OUT, TimeUnit.SECONDS);
+        }
 
     private WeatherResponse doGetWeather(String url) {
         String strBody = null;
@@ -99,4 +146,5 @@ public class WeatherDataServiceImp implements WeatherDataService {
         }
         return resp;
     }
-}
+
+    }

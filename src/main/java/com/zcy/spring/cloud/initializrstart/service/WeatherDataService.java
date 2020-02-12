@@ -18,4 +18,12 @@ public interface WeatherDataService {
      * @return
      */
     WeatherResponse getDataVyCityName(String cityName);
+
+
+    /**
+     * 根据城市id来跟新数据
+     * @param cityId
+     * @return
+     */
+    void syncDateByCityId(String cityId);
 }
