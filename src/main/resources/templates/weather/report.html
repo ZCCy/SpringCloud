@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <title>天气报</title>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <h3 th:text="${reportModel.title}"></h3>
+        <select class="custom-select" id="selectCityId">
+            <option th:each="city : ${reportModel.cityList}"
+                    th:value="${city.cityId}" th:text="${city.cityName}"
+                    th:selectd="${city.cityId eq reportModel.cityId}"></option>
+        </select>
+    </div>
+    <div class="row">
+        <h3 th:text="${reportModel.report.city}"></h3>
+    </div>
+    <div class="row">
+        <p>
+            当前温度：<span th:text="${reportModel.report.wendu}"></span>
+        </p>
+    </div>
+    <div class="row">
+        <p>
+            温馨提示：<span th:text="${reportModel.report.ganmao}"></span>
+        </p>
+    </div>
+    <div class="row">
+        <div class="card" th:each="forecast : ${reportModel.report.forecast}">
+            <div class="card-body border-info" >
+                <p class = "card-text" th:text="${forecast.date}">日期</p>
+                <p class = "card-text" th:text="${forecast.type}">天气类型</p>
+                <p class = "card-text" th:text="${forecast.high}">最高温度</p>
+                <p class = "card-text" th:text="${forecast.low}">最低温度</p>
+                <p class = "card-text" th:text="${forecast.fengxiang}">风向</p>
+                <p class = "card-text" th:text="${forecast.fengli}">风向</p>
+                <br>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+<script>
+    $(function () {
+        $("#selectCityId").change(function () {
+            console.log("aaaaaaaaaaaaa");
+            var cityId = $("#selectCityId").val();
+            var url = "/report/cityId" + cityId;
+            window.location.href = url;
+        })
+    });
+</script>
+</body>
+</html>

@@ -35,7 +35,9 @@ public class Forecast implements Serializable {
     }
 
     public String getFengli() {
-        return fengli;
+        String num = fengli.substring(9);
+        String str1=num.substring(0, num.indexOf("]"));
+        return str1;
     }
 
     public Forecast setFengli(String fengli) {
